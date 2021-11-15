@@ -1,3 +1,4 @@
+import Data.List ((\\))
 -- import Data.ByteString.Lazy.Builder.ASCII (integerDec)
 --https://www.cis.upenn.edu/~cis194/spring13/hw/04-higher-order.pdf
 
@@ -138,15 +139,58 @@ Node 2
 -- xor [False, True, False, False, True] == False
 -- Your solution must be implemented using a fold.
 
--- 2. Implement map as a fold. That is, complete the definition
--- map’ :: (a -> b) -> [a] -> [b]
--- map’ f = foldr ...
--- in such a way that map’ behaves identically to the standard map
--- function
-
 xor :: [Bool] -> Bool
 xor = foldr (\x acc -> if x then not acc else acc ) False
 
 -- class solution:
 xorB :: [Bool] -> Bool
 xorB = odd . foldr (\x acc -> if x then acc + 1 else acc) 0
+
+
+-- 2. Implement map as a fold. That is, complete the definition
+-- map’ :: (a -> b) -> [a] -> [b]
+-- map’ f = foldr ...
+-- in such a way that map’ behaves identically to the standard map
+-- function
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr ( \x acc -> f x : acc) []
+
+{- 
+=============================================================                    
+    Exercise 4: Finding primes
+=============================================================
+-}
+
+
+-- Read about the Sieve of Sundaram. Implement the algorithm us- http://en.wikipedia.org/wiki/Sieve_
+-- of_Sundaram ing function composition. Given an integer n, your function should
+-- generate all the odd prime numbers up to 2n + 2.
+--      sieveSundaram :: Integer -> [Integer]
+--      sieveSundaram = ...
+
+-- To give you some help, below is a function to compute the Cartesian product of two lists. This is similar to zip, but it produces all
+-- possible pairs instead of matching up the list elements. For example,
+-- cartProd [1,2] [’a’,’b’] == [(1,’a’),(1,’b’),(2,’a’),(2,’b’)]
+-- It’s written using a list comprehension, which we haven’t talked about
+-- in class (but feel free to research them).
+
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xs ys = [(x,y) | x <- xs, y <- ys]
+
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram n = removeDoubleAndIncrement $ cartProd l l
+    where 
+        l = [1..n]
+        removeDoubleAndIncrement :: [(Integer,Integer)] -> [Integer]
+        removeDoubleAndIncrement xss = map (\x -> 2 * x + 1) (firstRemoval xss)
+            where
+                firstRemoval :: [(Integer,Integer)] -> [Integer] 
+                firstRemoval xss = [1..n] \\ map ( \(a,b) -> a + b + 2 * a * b ) xss
+
+-- class solution (import Data.List ((\\)) should be included for list Difference):
+sieveSundaramB :: Integer -> [Integer]
+sieveSundaramB n = map (\x->2*x+1) $ ([1..n] \\) $ map (\(i,j) ->i+j+2*i*j) $ cartProd [1..n] [1..n]
+
+
+-- q = 2(i + j + 2ij) + 1
