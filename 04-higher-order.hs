@@ -145,4 +145,8 @@ Node 2
 -- function
 
 xor :: [Bool] -> Bool
-    xor xs = foldr (\x acc -> if x then not acc else acc ) False xs
+xor = foldr (\x acc -> if x then not acc else acc ) False
+
+-- class solution:
+xorB :: [Bool] -> Bool
+xorB = odd . foldr (\x acc -> if x then acc + 1 else acc) 0
