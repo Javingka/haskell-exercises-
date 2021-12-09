@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 import ExprT
 
 -- https://www.cis.upenn.edu/~cis194/spring13/hw/05-type-classes.pdf
